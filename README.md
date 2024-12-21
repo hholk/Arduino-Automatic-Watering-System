@@ -1,5 +1,4 @@
 # Arduino-Automatic-Watering-System
-# Arduino Automatic Watering System
 
 A simple yet robust Arduino/ATmega328 project for automatically watering plants using a **capacitive soil moisture sensor** and a **low-current motor**. Perfect for beginners who want a straightforward solution with clear instructions and easily adjustable parameters.
 
