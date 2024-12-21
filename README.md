@@ -153,14 +153,4 @@ You’re free to use, modify, and distribute this code under the terms of the MI
 
 ---
 
-## Contact
-
-- **Author**: [Your Name or GitHub Username]  
-- **Email**: [you@example.com]  
-- **GitHub**: [github.com/YourUsername]
-
-If you encounter any problems or have suggestions, feel free to **open an issue** or reach out via email.
-
----
-
 **Happy building and good luck with your automatic watering system!**
