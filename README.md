@@ -23,7 +23,7 @@ A simple yet robust Arduino/ATmega328 project for automatically watering plants 
 
 This repository contains:
 - A well-commented Arduino **sketch** that reads the soil moisture level using a **capacitive sensor** and directly drives a **small motor** if it draws less than ~40mA.  
-- A **README** with step-by-step instructions for **wiring**, **calibration**, **uploading**, and **basic soldering/wiring considerations**.
+ - A **Readme** with step-by-step instructions for **wiring**, **calibration**, **uploading**, and **basic soldering/wiring considerations**.
 
 > **Note:** If your motor requires more than ~40mA, you must add a **transistor** and **flyback diode**. This project is specifically designed for very small, low-current motors.
 
@@ -51,7 +51,7 @@ This repository contains:
    - Red wire = Motor +, Black wire = Motor –.  
    - If the current is higher, **use a transistor driver**.
 
-4. **USB Cable**  
+4. **USB cable**
    - To connect your Arduino board to the computer for uploading the code.
 
 5. **Breadboard & Jumpers**  
@@ -96,7 +96,7 @@ We recommend using the [**Arduino IDE**](https://www.arduino.cc/en/software) for
 ## Installation & Upload
 
 1. **Clone or Download**  
-   - Clone this repo or click on “Code” → “Download ZIP” to get the project files.
+   - Clone this repo or use the “Download ZIP” option under the “Code” button to get the project files.
 
 2. **Open the Sketch**  
    - Extract the ZIP (if downloaded) or open the cloned folder.  
