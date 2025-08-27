@@ -20,6 +20,11 @@ legacy **Arduino/ATmega328 sketch** is kept for reference.
 - Water level sensor
 - Wires, 5 V power supply
 
+### Wiring
+- Moisture sensor: `VCC` to **3V3**, `GND` to **GND**, signal line to **GPIO4**
+- Pump driver or transistor gate to **GPIO5** (pump powered from 5 V)
+- Reservoir level switch output to **GPIO6**
+
 ### Flashing Steps
 1. Install [Arduino IDE](https://www.arduino.cc/en/software) or PlatformIO.
 2. Add ESP32 board URL in **File > Preferences**:
