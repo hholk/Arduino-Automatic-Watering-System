@@ -1,0 +1,7 @@
+{
+  "name": "Olivenbaum",
+  "moistureThreshold": 520,
+  "waterDurationMs": 4000,
+  "measureIntervalMs": 60000,
+  "weatherAdjust": 1.0
+}

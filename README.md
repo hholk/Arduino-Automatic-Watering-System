@@ -1,5 +1,9 @@
 # Arduino Automatic Watering System
 
+## ESP32-C6 Display Version
+This variant targets the Waveshare ESP32-C6 board with a 1.47" LCD. It uses JSON-based plant profiles and an LVGL interface to select plants like an Olivenbaum or Avocadobaum. It publishes moisture data to Home Assistant via MQTT. See below for flashing instructions.
+
+
 A simple yet robust Arduino/ATmega328 project for automatically watering plants using a **capacitive soil moisture sensor** and a **low-current motor**. Perfect for beginners who want a straightforward solution with clear instructions, easily adjustable parameters, and a quick start guide.
 
 ---
@@ -176,3 +180,32 @@ We recommend using the [**Arduino IDE**](https://www.arduino.cc/en/software) for
 
 [MIT License](./LICENSE)  
 Feel free to use, modify, and share this project.
+
+### Quick Start (ESP32-C6)
+1. **Install Arduino IDE** from arduino.cc.
+2. In **File > Preferences**, add ESP32 board URL: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`.
+3. In **Tools > Board Manager**, install *ESP32* and select **ESP32C6 Dev Module**.
+4. Install libraries via **Sketch > Include Library > Manage Libraries**:
+   - `ArduinoJson`
+   - `PubSubClient`
+   - `lvgl`
+   - `TFT_eSPI`
+5. Copy this repository and open `src/main.cpp` as a sketch or use PlatformIO.
+6. Upload the files from `plants/` to SPIFFS using the ESP32 Sketch Data Upload tool.
+7. Enter your Wi-Fi and MQTT broker credentials in `src/main.cpp`.
+8. Click **Upload** to flash the board. The display lets you choose a plant and the device publishes values to Home Assistant.
+
+### Home Assistant
+Add the following to your `configuration.yaml` and restart:
+```yaml
+mqtt:
+  sensor:
+    - name: "Plant Moisture"
+      state_topic: "home/watering/status"
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.moisture }}"
+    - name: "Water Reservoir Low"
+      state_topic: "home/watering/status"
+      value_template: "{{ value_json.reservoirLow }}"
+      device_class: problem
+```
