@@ -25,6 +25,9 @@ static lv_color_t buf1[172 * 10];
 
 PlantConfig activeConfig;
 unsigned long lastMeasure = 0;
+lv_obj_t *moistureLabel = nullptr;
+lv_obj_t *nextWaterLabel = nullptr;
+unsigned long lastDisplayUpdate = 0;
 
 float weatherFactor = 1.0f; // updated via MQTT or Home Assistant
 
@@ -58,6 +61,9 @@ void publishStatus(int moisture, bool watering, bool reservoirLow) {
 }
 
 void guiCreate(); // forward declaration
+void showStatusScreen();
+void updateStatusDisplay(int moisture);
+void guiManualWater(lv_event_t *e);
 
 void setup() {
   Serial.begin(115200);
@@ -114,10 +120,54 @@ void guiPlantSelect(lv_event_t *e) {
   const char *path = (const char *)lv_event_get_user_data(e);
   if (loadPlantConfig(path, activeConfig)) {
     Serial.printf("Loaded config: %s\n", activeConfig.name.c_str());
-    lv_obj_clean(lv_scr_act());
-    lv_obj_t *label = lv_label_create(lv_scr_act());
-    lv_label_set_text_fmt(label, "%s aktiv", activeConfig.name.c_str());
-    lv_obj_align(label, LV_ALIGN_CENTER, 0, 0);
+    showStatusScreen();
+    updateStatusDisplay(-1);
+  }
+}
+
+void guiManualWater(lv_event_t *e) {
+  (void)e;
+  startWatering();
+  lastMeasure = millis();
+  updateStatusDisplay(-1);
+}
+
+void showStatusScreen() {
+  lv_obj_clean(lv_scr_act());
+  lv_obj_t *label = lv_label_create(lv_scr_act());
+  lv_label_set_text_fmt(label, "%s aktiv", activeConfig.name.c_str());
+  lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 10);
+
+  moistureLabel = lv_label_create(lv_scr_act());
+  lv_label_set_text(moistureLabel, "Feuchtigkeit: -");
+  lv_obj_align(moistureLabel, LV_ALIGN_TOP_MID, 0, 40);
+
+  nextWaterLabel = lv_label_create(lv_scr_act());
+  lv_label_set_text(nextWaterLabel, "Nächste Bewässerung: -");
+  lv_obj_align(nextWaterLabel, LV_ALIGN_TOP_MID, 0, 70);
+
+  lv_obj_t *btn = lv_btn_create(lv_scr_act());
+  lv_obj_set_size(btn, 150, 40);
+  lv_obj_align(btn, LV_ALIGN_BOTTOM_MID, 0, -20);
+  lv_obj_add_event_cb(btn, guiManualWater, LV_EVENT_CLICKED, NULL);
+  lv_obj_t *lbl = lv_label_create(btn);
+  lv_label_set_text(lbl, "Manuell bewässern");
+  lv_obj_center(lbl);
+}
+
+void updateStatusDisplay(int moisture) {
+  if (moisture >= 0 && moistureLabel) {
+    int percent = map(moisture, 0, 4095, 100, 0);
+    lv_label_set_text_fmt(moistureLabel, "Feuchtigkeit: %d%%", percent);
+  }
+  if (nextWaterLabel) {
+    unsigned long remaining = 0;
+    if (millis() > lastMeasure)
+      remaining = (lastMeasure + activeConfig.measureIntervalMs > millis())
+                      ? (lastMeasure + activeConfig.measureIntervalMs - millis())
+                      : 0;
+    lv_label_set_text_fmt(nextWaterLabel, "Nächste Bewässerung in %lus",
+                          remaining / 1000);
   }
 }
 
@@ -147,6 +197,12 @@ void loop() {
   if (!mqttClient.connected()) reconnectMqtt();
   mqttClient.loop();
 
+  if (activeConfig.name != "" &&
+      millis() - lastDisplayUpdate > 1000) {
+    updateStatusDisplay(-1);
+    lastDisplayUpdate = millis();
+  }
+
   if (activeConfig.name != "" && millis() - lastMeasure >
                                      activeConfig.measureIntervalMs) {
     int moisture = analogRead(kMoistureSensorPin);
@@ -166,5 +222,6 @@ void loop() {
     publishStatus(moisture, watering, reservoirLow);
     lastMeasure = millis();
     Serial.printf("Next check in %lu ms\n", activeConfig.measureIntervalMs);
+    updateStatusDisplay(moisture);
   }
 }
