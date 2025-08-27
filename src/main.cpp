@@ -103,14 +103,17 @@ void setup() {
 }
 
 void startWatering() {
+  Serial.println("Pump on");
   digitalWrite(kPumpPin, HIGH);
   delay(activeConfig.waterDurationMs);
   digitalWrite(kPumpPin, LOW);
+  Serial.println("Pump off");
 }
 
 void guiPlantSelect(lv_event_t *e) {
   const char *path = (const char *)lv_event_get_user_data(e);
   if (loadPlantConfig(path, activeConfig)) {
+    Serial.printf("Loaded config: %s\n", activeConfig.name.c_str());
     lv_obj_clean(lv_scr_act());
     lv_obj_t *label = lv_label_create(lv_scr_act());
     lv_label_set_text_fmt(label, "%s aktiv", activeConfig.name.c_str());
@@ -150,11 +153,18 @@ void loop() {
     bool reservoirLow = digitalRead(kWaterLevelPin) == LOW;
     float threshold = activeConfig.moistureThreshold * weatherFactor;
     bool watering = false;
+    Serial.printf("Moisture: %d\n", moisture);
+    Serial.printf("Reservoir low: %s\n", reservoirLow ? "yes" : "no");
+    Serial.printf("Threshold: %.2f\n", threshold);
     if (moisture < threshold && !reservoirLow) {
+      Serial.println("Soil dry -> watering");
       watering = true;
       startWatering();
+    } else {
+      Serial.println("Soil moist enough or reservoir low");
     }
     publishStatus(moisture, watering, reservoirLow);
     lastMeasure = millis();
+    Serial.printf("Next check in %lu ms\n", activeConfig.measureIntervalMs);
   }
 }
