@@ -1,0 +1,10 @@
+mqtt:
+  sensor:
+    - name: "Plant Moisture"
+      state_topic: "home/watering/status"
+      unit_of_measurement: "%"
+      value_template: "{{ value_json.moisture }}"
+    - name: "Water Reservoir Low"
+      state_topic: "home/watering/status"
+      value_template: "{{ value_json.reservoirLow }}"
+      device_class: problem

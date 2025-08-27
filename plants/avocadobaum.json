@@ -1,0 +1,7 @@
+{
+  "name": "Avocadobaum",
+  "moistureThreshold": 600,
+  "waterDurationMs": 5000,
+  "measureIntervalMs": 60000,
+  "weatherAdjust": 1.0
+}
