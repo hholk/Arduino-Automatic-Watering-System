@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import json
 from pathlib import Path
 
+
 @dataclass
 class PlantConfig:
     name: str = ""
