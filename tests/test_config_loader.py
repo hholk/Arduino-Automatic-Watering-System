@@ -4,7 +4,7 @@ import sys
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(REPO_ROOT))
 
-from scripts.config_loader import load_config
+from scripts.config_loader import load_config  # noqa: E402
 
 
 def test_olivenbaum_config_loads():
